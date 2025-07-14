@@ -24,9 +24,6 @@ with app.app_context():
     db.create_all()
     
 def delete_old_csv_files():
-    """
-    Deletes CSV files in the src/csv directory that are older than 24 hours.
-    """
     current_time = time.time()
     csv_dir = 'src/csv'
 
