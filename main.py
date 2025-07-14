@@ -20,9 +20,7 @@ class Data(db.Model):
     session_id = db.Column(db.String(36), primary_key=True)
     json_data = db.Column(db.Text, nullable=False)
 
-# Set up the application context
 with app.app_context():
-    # Create the database tables
     db.create_all()
     
 def delete_old_csv_files():
@@ -63,9 +61,7 @@ def upload():
         df = pd.read_csv(f'src/csv/{session_id}.csv')
         data_json = df.to_json(orient='records')
         
-        # Set up the application context before interacting with the database
         with app.app_context():
-            # Save the data JSON string in the database
             db.session.add(Data(session_id=session_id, json_data=data_json))
             db.session.commit()
 
@@ -80,10 +76,8 @@ def show_data(session_id):
 
     data_json = result.json_data
 
-    # Use StringIO to wrap the JSON string
     data = pd.read_json(StringIO(data_json), orient='records')
 
-    # Convert the DataFrame to a list of dictionaries
     data_list = data.to_dict(orient='records')
 
     return render_template('show_data.html', data=data_list, current=0)
