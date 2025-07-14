@@ -1,0 +1,51 @@
+html, body {
+    overflow-y: hidden;
+}
+.body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    text-align: center;
+    justify-content: center;
+}
+table, img {
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border-radius: 2.5%;
+}
+table th, table td {
+    border: 1px solid rgb(255, 255, 255);
+    padding: 8px;
+    text-align: center;
+}
+form {
+    padding: 8px;
+    text-align: center;
+}
+.copy-button {
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.character-image {
+    max-width: 50%;
+    height: auto;
+}
+.nalert {
+    position: absolute;
+    padding: 10px;
+    right: 0; /* by iosgamertool*/
+}
+.settingsbtn {
+    position: absolute;
+    padding: 10px;
+}
+.hidden-column {
+    display: none;
+}

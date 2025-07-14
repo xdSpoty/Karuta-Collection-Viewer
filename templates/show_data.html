@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        if (/Mobi|Android/i.test(navigator.userAgent)) {
+            // Wenn der Benutzer ein mobiles Gerät verwendet
+            document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=0.8');
+        }
+    </script>
+    <meta name="author" content="Spoty">
+    <meta name="description" content="A website to visualize the karuta collection.">
+    <title>Natsuki | Karuta Collection Viewer</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/icon_round.png') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <script>
+        var maxIndex = {{ data|length - 1 if data is defined else 0 }};
+        var data = {{ data|tojson if data is defined else '[]' }};
+    </script>
+    <script src="{{ url_for('static', filename='js/show_data.js') }}"></script>
+    <noscript>Sorry, your browser does not support JavaScript!</noscript>
+</head>
+    <body>
+        {% if data and current < data|length %}
+            <div class="nalert" id="liveAlertPlaceholder"></div>
+            <div class="settingsbtn">
+                <button class="btn btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">⚙️</button>
+            </div>
+            <div>
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                    <div class="offcanvas-header">
+                      <h1 class="offcanvas-title" id="offcanvasRightLabel">Settings</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <div class="form-check form-switch fs-5">
+                            <input class="form-check-input md" type="checkbox" role="switch" id="switch-quality">
+                            <label class="form-check-label" for="switch-quality">Quality</label>
+                        </div>
+                        <br>
+                        <div class="form-check form-switch fs-5">
+                            <input class="form-check-input md" type="checkbox" role="switch" id="switch-burnValue">
+                            <label class="form-check-label" for="switch-burnValue">Burn Value</label>
+                        </div>
+                        <br>
+                        <div class="form-check form-switch fs-5">
+                            <input class="form-check-input md" type="checkbox" role="switch" id="switch-tag">
+                            <label class="form-check-label" for="switch-tag">Tag</label>
+                        </div>
+                    </div>
+                  </div>
+            </div>
+            <div class="body">
+                <div>
+                    <table id="userTable">
+                        <tr>
+                            <th>Code</th>
+                            <th>Character</th>
+                            <th>Series</th>
+                            <th>Wishlists</th>
+                            <th>Edition</th>
+                            <th>Number</th>
+                            <th>🔥</th>
+                            <th id="th-quality" class="hidden-column">Quality</th>
+                            <th id="th-burnValue" class="hidden-column">Burn Value</th>
+                            <th id="th-tag" class="hidden-column">Tag</th>
+                        </tr>
+                        <tr>
+                            <td id="code">{{ data[current]['code'] }}</td>
+                            <td id="character">{{ data[current]['character'] }}</td>
+                            <td id="series">{{ data[current]['series'] }}</td>
+                            <td id="wishlists">{{ data[current]['wishlists'] }}</td>
+                            <td id="edition">{{ data[current]['edition'] }}</td>
+                            <td id="number">{{ data[current]['number'] }}</td>
+                            <td id="burn">False</td>
+                            <td id="quality" class="td-quality hidden-column">{{ data[current]['quality'] }}</td>
+                            <td id="burnValue" class="td-burnValue hidden-column">{{ data[current]['burnValue'] }}</td>
+                            <td id="tag" class="td-tag hidden-column">{{ data[current]['tag'] }}</td>
+                        </tr>
+                    </table>
+                    <script src="{{ url_for('static', filename='js/switches.js') }}"></script>
+                </div>
+                <div>
+                    <button class="copy-button btn btn-outline-light" onclick="copyCode()" id="copyCode">Copy Code</button>
+                    <button class="copy-button btn btn-outline-light"  onclick="copyViewCode()" id="copyViewCode">Copy View</button>
+
+                    <button class="btn btn-outline-light" onclick="burnButton()" id="burnButton">🔥</button>
+                    <button class="btn btn-outline-light" onclick="downloadFile()" id="download-button">Download</button>
+                </div>
+                
+                <div>
+                    <img class="character-image" src="{{ 'http://d2l56h9h5tj8ue.cloudfront.net/images/cards/' ~ data[current]['character'].replace(' ', '-').lower() ~ '-' ~ data[current]['edition'] ~ '.jpg' }}" alt="">
+                    <br>
+                    <button class="btn btn-outline-light" onclick="prevData()">Previous</button>
+                    <button class="btn btn-outline-light" onclick="nextData()">Next</button>
+                </div>
+              </div>
+            
+        {% endif %}
+        <script src="{{ url_for('static', filename='js/alert_button.js') }}"></script>
+    </body>
+</html>
